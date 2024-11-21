@@ -41,15 +41,18 @@ void AudioCallback(AudioHandle::InputBuffer in, AudioHandle::OutputBuffer out,
   // Toggle bypass when FOOTSWITCH_2 is pressed
   bypass ^= hw.switches[Hothouse::FOOTSWITCH_2].RisingEdge();
 
+  if (!bypass) {
+    for (size_t i = 0; i < size*100; ++i) {
+      f = ::expf(f);
+    }
+  }
+
   for (size_t i = 0; i < size; ++i) {
     if (bypass) {
       // Copy left input to both outputs (mono-to-dual-mono)
       out[0][i] = out[1][i] = in[0][i];
     } else {
       // TODO: replace silence with something awesome
-      for (size_t i = 0; i < size*1.1f; ++i) {
-        f = ::expf(f);
-      }
       out[0][i] = out[1][i] = in[0][i] * 1024.0f;
     }
   }
